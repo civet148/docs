@@ -1,0 +1,9 @@
+1.在master_ip_failover，master_ip_online_change中需要将浮动IP改一下，我
+们在脚本中写的是 192.168.26.99，每个文件中有一处需要这个修改。
+2.在测试前，先将浮动IP绑在主库上：
+ifconfig eth0 add 192.168.26.99 netmask 255.255.255.0
+3.在master_ip_failover，master_ip_online_change中需要mysql的root密码，我
+们在脚本中写 的是abc123,master_ip_failover有一处要修
+改，master_ip_online_change有三处要修改。
+4.要使上面的脚本正常运行，还需要安装perl-Net-Telnet：
+yum install perl-Net-Telnet （不知道要不启动telnetserver）
