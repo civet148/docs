@@ -1,0 +1,5 @@
+在其他服务里获取session在线状态的方法：
+status status_client.StatusClient;
+status = status_client.NewStatusClient("redis", "cache")
+s.status.GetUserOnlineSessions()；
+
