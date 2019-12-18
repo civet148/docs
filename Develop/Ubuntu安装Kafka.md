@@ -19,7 +19,6 @@ sudo tar xvzf kafka_2.11-2.3.1.tgz -C /opt/Kafka # 解压kafka到安装路径
 ```conf
 export KAFKA_HOME="/opt/Kafka/kafka_2.11-2.3.1"
 export PATH="$PATH:$KAFKA_HOME/bin"
-alias sudo='sudo env PATH=$PATH'
 ```
 
 * 环境变量生效
@@ -30,11 +29,11 @@ source ~/.bashrc
 * 启动Kafka
 
 ```shell
-sudo kafka-server-start.sh -daemon $KAFKA_HOME/config/server.properties
+sudo  $KAFKA_HOME/bin/kafka-server-start.sh -daemon $KAFKA_HOME/config/server.properties
 ```
 
 * 停止Kafka
 
 ```shell
-sudo kafka-server-stop.sh
+sudo $KAFKA_HOME/bin/kafka-server-stop.sh
 ```
