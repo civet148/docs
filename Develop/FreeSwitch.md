@@ -12,24 +12,26 @@ sudo apt-get install -y nasm libsqlite3-dev libcurl4-openssl-dev libspeex-dev li
                         libopus-dev liblua5.2-dev libpq-dev libksba-dev uuid libsndfile-dev
 sudo ln -s /usr/include/lua5.2/lua.h /usr/include/lua.h
 
-# 下载并编译安装signalwire-c
-cd /usr/src
-git clone https://github.com/signalwire/signalwire-c.git
-cd signalwire-c
-cmake .
-make
-sudo make install
+mkdir ~/src
 
-# 下载并编译安装libks
-cd /usr/src
+# 下载并编译安装libks(必须先于signalwire-c安装)
+cd ~/src
 git clone https://github.com/signalwire/libks.git
 cd libks
 cmake .
 make
 sudo make install
 
+# 下载并编译安装signalwire-c
+cd ~/src
+git clone https://github.com/signalwire/signalwire-c.git
+cd signalwire-c
+cmake .
+make
+sudo make install
+
 # 下载freeswitch代码编译
-cd /usr/src
+cd ~/src
 git clone https://github.com/signalwire/freeswitch.git
 ./bootstrap.sh
 ./configure
