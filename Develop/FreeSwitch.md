@@ -4,7 +4,7 @@
 
 # 安装依赖包
 sudo apt-get install -y git-core subversion build-essential autoconf automake libtool libncurses5 libncurses5-dev make libjpeg-dev sqlite3 gcc-7 libtool zlib1g zlib1g-dev
-sudo apt-get install libcurl4-openssl-dev libexpat1-dev libgnutls28-dev libtiff-dev libx11-dev unixodbc-dev libssl-dev python2.7-dev \
+sudo apt-get install -y libcurl4-openssl-dev libexpat1-dev libgnutls28-dev libtiff-dev libx11-dev unixodbc-dev libssl-dev python2.7-dev \
                        zlib1g-dev libbzrtp-dev libasound2-dev libogg-dev libvorbis-dev libperl-dev libgdbm-dev libdb-dev python-dev \
                        uuid-dev cmake
 sudo apt-get install -y pkg-config*
