@@ -1,23 +1,5 @@
 # Ubuntu 18.04 LTS安装手册
 
-* cmake低版本升级
-
-由于FreeSwitch硬性要求 cmake >= v3.7.2 低于此版本需要手动升级cmake才能编译
-
-```shell
-# 查看版本信息
-cmake --version
-
-# 卸载低版本cmake
-sudo apt-get autoremove cmake
-wget https://cmake.org/files/v3.10/cmake-3.10.2.tar.gz
-tar xvfz cmake-3.10.2.tar.gz
-cd cmake-3.10.2
-./configure --prefix=/usr
-make 
-sudo make install
-```
-
 * freeswitch编译
 
 ```shell
@@ -148,10 +130,23 @@ wget https://files.freeswitch.org/releases/sounds/freeswitch-sounds-zh-hk-sinmei
 wget https://files.freeswitch.org/releases/sounds/freeswitch-sounds-zh-hk-sinmei-32000-1.0.51.tar.gz
 wget https://files.freeswitch.org/releases/sounds/freeswitch-sounds-zh-hk-sinmei-48000-1.0.51.tar.gz
 
-
-
-
-
 ```
 
+* cmake低版本升级
+
+由于FreeSwitch硬性要求 cmake >= v3.7.2 低于此版本需要手动升级cmake才能编译
+
+```shell
+# 查看版本信息
+cmake --version
+
+# 卸载低版本cmake
+sudo apt-get autoremove cmake
+wget https://cmake.org/files/v3.10/cmake-3.10.2.tar.gz
+tar xvfz cmake-3.10.2.tar.gz
+cd cmake-3.10.2
+./configure --prefix=/usr
+make 
+sudo make install
+```
 
