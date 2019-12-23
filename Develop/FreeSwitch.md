@@ -199,3 +199,14 @@ freeswitch -nc
 su root
 freeswitch -stop
 ```
+
+* 登录FusionPBX浏览器监控
+
+FusionPBX安装完成会输出链接URL和登录账号
+
+```shell
+domain name: https://192.168.124.110
+      username: admin
+      password: M7NFLfsSyI9uMl912oBYL2FYptE
+
+```
