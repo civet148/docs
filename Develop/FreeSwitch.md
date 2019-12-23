@@ -1,4 +1,6 @@
-# Ubuntu 18.04 LTS安装手册
+# 1. Ubuntu 18.04 LTS安装手册
+
+## 1.1 手动编译安装模式
 
 * freeswitch编译
 
@@ -60,7 +62,7 @@ freeswitch
 
 如果sudo make uhd-sounds-install和sudo make uhd-moh-install执行失败考虑手动下载
 
-[https://files.freeswitch.org/releases/sounds]  
+https://files.freeswitch.org/releases/sounds
 
 music/sound类型声音文件下载后解压到 /usr/local/freeswitch/sounds
 
@@ -150,3 +152,50 @@ make
 sudo make install
 ```
 
+## 1.2 FusionPBX管理工具下载并安装FreeSwitch
+
+* 参考资料
+非Ubuntu系统安装脚本参考官网 https://www.fusionpbx.com/download.php
+安装步骤（仅供参考） https://docs.fusionpbx.com/en/latest/getting_started/quick_install.html
+
+```shell
+
+# 切换root用户
+su - root
+
+# 下载并执行安装脚本
+wget -O - https://raw.githubusercontent.com/fusionpbx/fusionpbx-install.sh/master/ubuntu/pre-install.sh | sh;
+
+# 进入下载目录并安装
+cd /usr/src/fusionpbx-install.sh/ubuntu && ./install.sh
+```
+
+# 2. 启动和停止FreeSwitch
+
+* 添加环境变量 
+
+```shell
+
+# 编辑环境变量文件
+vi ~/.bashrc
+
+# .bashrc文件末尾添加下面一行:x保存退出
+export PATH=$PATH:/usr/local/freeswitch/bin
+
+# 环境变量生效
+source ~/.bashrc
+```
+
+* 启动
+
+```shell
+su root
+freeswitch -nc
+```
+
+* 停止
+
+```shell
+su root
+freeswitch -stop
+```
