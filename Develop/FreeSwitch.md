@@ -1,6 +1,62 @@
-# 1. Ubuntu 18.04 LTS安装手册
+# Ubuntu 18.04 LTS安装手册
 
-## 1.1 手动编译安装模式
+注意: Ubuntu 16.04 LTS版本安装以下方式均失败，请使用18.04版本
+
+## 1. FusionPBX管理工具下载并安装FreeSwitch(推荐方式)
+
+* 参考资料
+非Ubuntu系统安装脚本参考官网 https://www.fusionpbx.com/download.php
+安装步骤（仅供参考） https://docs.fusionpbx.com/en/latest/getting_started/quick_install.html
+
+```shell
+
+# 切换root用户
+su - root
+
+# 下载并执行安装脚本
+wget -O - https://raw.githubusercontent.com/fusionpbx/fusionpbx-install.sh/master/ubuntu/pre-install.sh | sh;
+
+# 进入下载目录并安装
+cd /usr/src/fusionpbx-install.sh/ubuntu && ./install.sh
+```
+
+
+* 登录FusionPBX浏览器监控
+
+FusionPBX安装完成会输出链接URL和登录账号
+
+```shell
+domain name: https://192.168.124.110
+username: admin
+password: M7NFLfsSyI9uMl912oBYL2FYptE
+```
+
+* 启动/停止/重启FreeSwitch
+
+```shell
+# 启动
+sudo service freeswitch start
+# 停止
+sudo service freeswitch stop
+# 重启
+sudo service freeswitch restart
+```
+
+* FreeSwitch文件路径
+
+执行文件: /usr/bin
+启动配置: /etc/default/freeswitch
+配置文件: /etc/freeswitch
+进程ID文件: /run/freeswitch
+日志文件: /var/log/freeswitch
+库文件: /var/lib/freeswitch
+其他文件：/usr/share/freeswitch
+
+* FusionPBX文件路径
+部署文件路径: /var/www/fusionpbx
+Nginx配置:/etc/nginx/sites-available/fusionpbx
+
+## 2. 手动编译安装模式(不推荐)
 
 * freeswitch编译
 
@@ -69,10 +125,9 @@ music/sound类型声音文件下载后解压到 /usr/local/freeswitch/sounds
 ```shell
 
 # 案例
-mkdir -p downloads
-cd downloads
+cd /usr/local/freeswitch/sounds
 wget https://files.freeswitch.org/releases/sounds/freeswitch-sounds-zh-cn-sinmei-8000-1.0.51.tar.gz
-tar xvfz freeswitch-sounds-zh-cn-sinmei-8000-1.0.51.tar.gz -C /usr/local/freeswitch/sounds
+tar xvfz freeswitch-sounds-zh-cn-sinmei-8000-1.0.51.tar.gz
 
 # 所有下载资源链接
 wget https://files.freeswitch.org/releases/sounds/freeswitch-sounds-en-ca-june-8000-1.0.51.tar.gz
@@ -134,43 +189,7 @@ wget https://files.freeswitch.org/releases/sounds/freeswitch-sounds-zh-hk-sinmei
 
 ```
 
-* cmake低版本升级
-
-由于FreeSwitch硬性要求 cmake >= v3.7.2 低于此版本需要手动升级cmake才能编译
-
-```shell
-# 查看版本信息
-cmake --version
-
-# 卸载低版本cmake
-sudo apt-get autoremove cmake
-wget https://cmake.org/files/v3.10/cmake-3.10.2.tar.gz
-tar xvfz cmake-3.10.2.tar.gz
-cd cmake-3.10.2
-./configure --prefix=/usr
-make 
-sudo make install
-```
-
-## 1.2 FusionPBX管理工具下载并安装FreeSwitch
-
-* 参考资料
-非Ubuntu系统安装脚本参考官网 https://www.fusionpbx.com/download.php
-安装步骤（仅供参考） https://docs.fusionpbx.com/en/latest/getting_started/quick_install.html
-
-```shell
-
-# 切换root用户
-su - root
-
-# 下载并执行安装脚本
-wget -O - https://raw.githubusercontent.com/fusionpbx/fusionpbx-install.sh/master/ubuntu/pre-install.sh | sh;
-
-# 进入下载目录并安装
-cd /usr/src/fusionpbx-install.sh/ubuntu && ./install.sh
-```
-
-# 2. 启动和停止FreeSwitch
+# 2.1 启动和停止FreeSwitch
 
 * 添加环境变量 
 
@@ -198,15 +217,4 @@ freeswitch -nc
 ```shell
 su root
 freeswitch -stop
-```
-
-* 登录FusionPBX浏览器监控
-
-FusionPBX安装完成会输出链接URL和登录账号
-
-```shell
-domain name: https://192.168.124.110
-      username: admin
-      password: M7NFLfsSyI9uMl912oBYL2FYptE
-
 ```
