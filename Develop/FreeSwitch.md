@@ -24,6 +24,17 @@ wget -O - https://raw.githubusercontent.com/fusionpbx/fusionpbx-install.sh/maste
 cd /usr/src/fusionpbx-install.sh/ubuntu && ./install.sh
 ```
 
+* 关闭防火墙
+
+```shell
+# 查看防火墙状态
+sudo ufw status
+
+# 关闭防火墙
+sudo ufw disable
+
+```
+
 
 * 登录FusionPBX浏览器监控
 
