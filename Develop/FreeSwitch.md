@@ -4,6 +4,10 @@
 
 ## 1. FusionPBX管理工具下载并安装FreeSwitch(推荐方式)
 
+* 提醒
+
+安装完成后会自动开启iptables防火墙，后续请自行停止防火墙或添加路由规则
+
 * 参考资料
 非Ubuntu系统安装脚本参考官网 https://www.fusionpbx.com/download.php
 安装步骤（仅供参考） https://docs.fusionpbx.com/en/latest/getting_started/quick_install.html
