@@ -27,12 +27,21 @@ cd /usr/src/fusionpbx-install.sh/ubuntu && ./install.sh
 * 关闭防火墙
 
 ```shell
+
+# 切换root用户
+su root
+
 # 查看防火墙状态
-sudo ufw status
+ufw status
 
 # 关闭防火墙
-sudo ufw disable
+ufw disable
 
+# 更改iptables规则
+iptables -P INPUT ACCEPT
+iptables -P OUTPUT ACCEPT
+iptables -P FORWARD ACCEPT
+iptables-save > /etc/iptables/rules.v4
 ```
 
 
