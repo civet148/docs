@@ -242,3 +242,12 @@ freeswitch -nc
 su root
 freeswitch -stop
 ```
+
+# 3. 注册RelaySDK project id和token
+
+golang开发需注册project id和token（需翻墙），官网 https://signalwire.com/signin
+
+SPACE URL: civet148.signalwire.com
+PROJECT ID: 3e2c1130-9f7a-454b-9e35-1540e280d5bc
+TOKEN NAME: voipchat-token 
+TOKEN: PTb739db3488953bfd970d066f7e206f78aea302a89eff151f
