@@ -1,6 +1,20 @@
+
+# CentOS 安装FusionPBX
+
+```shell
+su root
+yum install -y wget
+
+wget -O - https://raw.githubusercontent.com/fusionpbx/fusionpbx-install.sh/master/centos/pre-install.sh | sh
+
+cd /usr/src/fusionpbx-install.sh/centos && ./install.sh
+```
+
 # Ubuntu 18.04 LTS安装手册
 
 注意: Ubuntu 16.04 LTS版本安装以下方式均失败，请使用18.04版本
+
+非Ubuntu系统安装脚本参考官网 https://www.fusionpbx.com/download.php
 
 ## 1. FusionPBX管理工具下载并安装FreeSwitch(推荐方式)
 
@@ -9,7 +23,7 @@
 安装完成后会自动开启iptables防火墙，后续请自行停止防火墙或添加路由规则
 
 * 参考资料
-非Ubuntu系统安装脚本参考官网 https://www.fusionpbx.com/download.php
+
 安装步骤（仅供参考） https://docs.fusionpbx.com/en/latest/getting_started/quick_install.html
 
 ```shell
@@ -18,6 +32,7 @@
 su - root
 
 # 下载并执行安装脚本
+apt-get install -y wget
 wget -O - https://raw.githubusercontent.com/fusionpbx/fusionpbx-install.sh/master/ubuntu/pre-install.sh | sh;
 
 # 进入下载目录并安装
@@ -243,7 +258,7 @@ su root
 freeswitch -stop
 ```
 
-# 3. 注册RelaySDK project id和token
+# 注册RelaySDK project id和token
 
 golang开发需注册project id和token（需翻墙），官网 https://signalwire.com/signin
 
