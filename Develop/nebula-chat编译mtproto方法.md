@@ -13,5 +13,8 @@ source ~/.bashrc
 mkdir -p $GOPATH/src/nebula.chat/vendor/github.com
 cp -r $GOPATH/src/github.com/gogo $GOPATH/src/nebula.chat/vendor/github.com
 cd $GOPATH/pkg/mod/nebula.chat/enterprise/mtproto
+
+# 转换build2.sh脚本为UNIX格式
+dos2unix build2.sh
 ./build2.sh
 ```
