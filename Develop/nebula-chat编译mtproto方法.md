@@ -16,5 +16,6 @@ cd $GOPATH/pkg/mod/nebula.chat/enterprise/mtproto
 
 # 转换build2.sh脚本为UNIX格式
 dos2unix build2.sh
+sudo chmod +x build2.sh
 ./build2.sh
 ```
