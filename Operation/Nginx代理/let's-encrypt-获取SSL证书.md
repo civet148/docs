@@ -157,3 +157,11 @@ location /monitor { # 数据转发到monitor监听的HTTP服务端口
 # 3.6 测试HTTPS访问
 
 打开浏览器，地址栏输入 https://test2.longchat.cc:444/monitor
+
+# 3.7 SSL证书续期
+
+```shell
+
+[root@iZwz99rw7qikaoz50ptb9uZ letsencrypt]# ./letsencrypt-auto renew
+
+```
