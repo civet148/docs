@@ -275,6 +275,152 @@ deadline  partition  sectors
 
 
 
+### 2.3.9 从lotus节点查询扇区
+
+```sh
+# 获取扇区状态信息
+$ docker exec lotus lotus state sectors f07749
+$ docker exec lotus lotus state --tipset @367242 sectors f07749
+
+17339: 626167626f656134623561626361337a356d7179366e6461326877736c6e376668686d6a7a6b32713567786a786f667a346578366270647a337869637563757979
+17341: 626167626f6561346235616263627a6d6f7972346232747471366c6e6235376f65646b697065347a746165696472737337726f6f66693478766b66646f71793271
+.
+.
+.
+
+# 获取指定扇区状态(13039是一个失败扇区)
+$ docker exec lotus lotus state sector f07749 13039
+
+SectorNumber:  13039
+SealProof:  8
+SealedCID:  bagboea4b5abca34acdpwsn2hy5cxzvdufeeekxcmaq5nkfl6jxfv33fje5siw7ze
+DealIDs:  []
+
+Activation:  354755 (4 days 42 minutes ago)
+Expiration:  1906921 (in 1 year 24 weeks)
+
+DealWeight:  0
+VerifiedDealWeight:  0
+InitialPledge:  0.257234424167759417 FIL
+ExpectedDayReward:  0.004611922016597395 FIL # 期望奖励（按天）
+ExpectedStoragePledge:  0.089186788156165818 FIL # 期望存储抵押
+
+Deadline:  4 
+Partition:  0 # 所属分区索引
+
+# 获取指定高度消息(参数Params中带扇区信息)
+#Method: 5=SubmitWindowPoSt 6=PreCommitSector 7=ProveCommitSector 8=ExtendSectorExpiration 9=TerminateSectors 10=DeclareFaults
+#				 11=DeclareFaultsRecovered
+$ lotus state list-messages --to f07749 --toheight 366660
+{
+  "Version": 0,
+  "To": "f07749",
+  "From": "f3uh2sbxn2qcqazrjxrdzc4lnxcpe26skm2e4ran5xlqj6alx2c7mha7hhmioodqtnbzwsndjzw2modmnorwoa",
+  "Nonce": 25303,
+  "Value": "198333496380526955",
+  "GasLimit": 65143988,
+  "GasFeeCap": "15350610711",
+  "GasPremium": "99204",
+  "Method": 7,
+  "Params": "ghlEc1kHgLC4S8kh4ZaPRA6mTOiyqfcX5MQZ8d5y5B50Tf1Ajgu/v8hoWUAaaUC45fbzP263PbiEj0uAAV1BV4089hV/mTXjhW/Ct8CHE0N6NuWezh5Frj0n6geRIRss....................................................................gw271X09nOBJa7AprcDA1Jr9XLIV8GbQqDg==",
+  "CID": {
+    "/": "bafy2bzacecndsgjcybr5ayy7p5fcehkeum44y3wxxrwvncqeb4rinxylfhio4"
+  }
+}
+{
+  "Version": 0,
+  "To": "f07749",
+  "From": "f3uh2sbxn2qcqazrjxrdzc4lnxcpe26skm2e4ran5xlqj6alx2c7mha7hhmioodqtnbzwsndjzw2modmnorwoa",
+  "Nonce": 25304,
+  "Value": "95160364538945130",
+  "GasLimit": 17426138,
+  "GasFeeCap": "32057605188",
+  "GasPremium": "100427",
+  "Method": 6,
+  "Params": "iggZRYfYKlgpAAGC4gOB6AIg93d+gC8cqRq1ziVgYCFhDHlsufiHUe30p5ZMcHMffyYaAAWS0oAaAB1F6fQAAAA=",
+  "CID": {
+    "/": "bafy2bzacec4lcn4tynxriky23knfxwpe7z3mndzc6fyudbqhdvqrdkyp24fmu"
+  }
+}
+
+# 通过消息ID查链上信息
+$ docker exec lotus lotus chain getmessage bafy2bzacebxonhocwe55a2z7kb6dvw4lsquuihtw2jlppx6iez656tzfedxf2
+{
+  "Version": 0,
+  "To": "f07749",
+  "From": "f3uh2sbxn2qcqazrjxrdzc4lnxcpe26skm2e4ran5xlqj6alx2c7mha7hhmioodqtnbzwsndjzw2modmnorwoa",
+  "Nonce": 25222,
+  "Value": "95124382599796953",
+  "GasLimit": 17916888,
+  "GasFeeCap": "55813263999",
+  "GasPremium": "99718",
+  "Method": 6,
+  "Params": "iggZRZvYKlgpAAGC4gOB6AIgtyHLoe1U9p+3fUQzdjpSm7DZSFEBei7bgwwfXjozRgEaAAWS0YAaAB1F6fQAAAA=",
+  "CID": {
+    "/": "bafy2bzacebxonhocwe55a2z7kb6dvw4lsquuihtw2jlppx6iez656tzfedxf2"
+  }
+}
+```
+
+### 2.3.10 查询历史消息费用明细
+
+```sh
+$ ./lotus state replay --detailed-gas --show-trace bafy2bzaced45qg5ckslo4jip5k7gp5oa3ejngzbk57wt3ropu65tdv4ywjpum 
+
+Replay receipt:
+Exit code: 0
+Return: 
+Gas Used: 12249354
+Base Fee Burn: 39741598169211198
+Overestimaton Burn: 1388654402933366
+Miner Penalty: 0 # 罚款
+Miner Tip: 1522247079779 # 矿工费
+Refund: 489640006679055531
+Total Message Cost: 41131774819224343 # 销毁手续费
+
+f3q25bl5oxgr4bo4kerdoodwk7o5zsmbdhrqqeb77mmd62tepdzmpj3szjqs2r3t6o2ce4jtpo5jdlqtmumqhq  f03249  93002519192392485       6       8a081936b2d82a5829000182e20381e8022090b60f0d2518786c897d1e0458508e68eba9557a09a75822d3a2902002abfc531a0005bab8801a001d6a44f4000000    0
+        f03249  f02     0       3               0       8282581a0004ba338b3e5c6e57406d74701226248e39b381bfe1d69e8b865700958a67a22c7d8d4c2ef414f75326ebe072a79072d96d49003369530114162e74
+        f03249  f04     0       9               0       8449001b0b34d80000000049001b0bad3535a100004c00169526f43ccc28f4a4b395825819001b0b3d8bad7a76f771e5655602fb45a89d6237bc3abec02e570006856929624098a9156e17c976cc8ae93c0b1223cc7f
+```
+
+
+
+### 2.3.11 查看lotus-miner最后n条日志
+
+```sh
+$ docker logs -t --tail 5000 lotus-miner
+```
+
+
+
+### 2.3.12 强制更改扇区状态
+
+```sh
+# 手动将扇区号为0的扇区当前状态更改为FinalizeSector
+$ lotus-miner sectors  update-state --really-do-it 0 FinalizeSector
+```
+
+
+
+### 2.3.13 强制调度任务
+
+```sh
+$ lotus-miner sealing sched-diag --force-sched
+```
+
+### 2.3.14 查询钱包账户和用途
+
+```sh
+$ lotus-miner actor control list 
+
+name       ID       key           use    balance                    
+owner      t02510   t3q25bl5o...  other  2.076935243037185513 FIL
+worker     t02510   t3q25bl5o...  other  2.076935243037185513 FIL
+control-0  t032873  t3thigqe2...  post   36.032275855858655535 FIL
+```
+
+
+
 # 3. FileCoin扇区状态机
 
 **Empty** - 空状态
@@ -345,6 +491,8 @@ deadline  partition  sectors
 					*---------------------/
 
 ```
+
+
 
 # 4. Filecoin费用架构
 
@@ -447,7 +595,7 @@ export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 ```
 
 ```shell
-### ubuntu使用apt安装依赖包(苹果Mac系统使用brew安装并且可能需要自行安装rust环境)
+### ubuntu使用apt安装依赖包(苹果Mac系统使用brew安装)
 $ sudo apt update && sudo apt-get install -y curl ca-certificates llvm clang mesa-opencl-icd ocl-icd-opencl-dev jq hwloc libhwloc-dev
 $ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 $ source $HOME/.cargo/env
@@ -521,7 +669,9 @@ $ ./lotus-miner run --nosync
 
 ## 7.1 PreCommit超时
 
-## 7.2 持续WPoSt证明出错
+## 7.2 持续错误
+
+距离第一次罚款后48个deadlines（24小时）发现错误扇区未恢复则罚币一次，每个扇区罚款≈0.015FIL（具体罚多少还需研究）
 
 ## 7.3 未声明扇区出错
 
@@ -534,4 +684,642 @@ $ ./lotus-miner run --nosync
 - 数据丢失或硬盘挂了
 
 ## 7.6  共识机制错误
+
+
+
+# 8. 矿工号
+
+- 雅安 f07749
+
+```sh
+$ export FULLNODE_API_INFO="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBbGxvdyI6WyJyZWFkIiwid3JpdGUiLCJzaWduIiwiYWRtaW4iXX0.zEaMwQrzYCX6HPduikT7WKQWKQmUh9peJVnTxDdEQA0:/ip4/10.10.12.6/tcp/1234/http"
+
+$ export MINER_API_INFO="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBbGxvdyI6WyJyZWFkIiwid3JpdGUiLCJzaWduIiwiYWRtaW4iXX0.jhePieOqemHTNQR1kpFq_TZzbojrZ4hb9BYfWBM_sxY:/ip4/10.10.12.5/tcp/2345/http"
+```
+
+
+
+- 中山（测试矿工 f0144615）
+
+```sh
+$ export FULLNODE_API_INFO="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBbGxvdyI6WyJyZWFkIiwid3JpdGUiLCJzaWduIiwiYWRtaW4iXX0.TT_4RohGN8SZXYElRGEptl3zl8V6ny2yR-i42mRbVxU:/ip4/10.20.2.107/tcp/1234/http"
+
+$ export MINER_API_INFO="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBbGxvdyI6WyJyZWFkIiwid3JpdGUiLCJzaWduIiwiYWRtaW4iXX0.NASOK2kY2Oofa1B2-1FIq8P4y6EBzV1Pvlqj0kOzovE:/ip4/10.20.4.107/tcp/2345/http"
+```
+
+- 鹤山
+
+```sh
+$ export FULLNODE_API_INFO="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBbGxvdyI6WyJyZWFkIiwid3JpdGUiLCJzaWduIiwiYWRtaW4iXX0.UB0YNfLuTjf1iVwxB8d5oOvaPJ6VcaqF1TLKUow9Xqw:/ip4/10.33.1.8/tcp/1234/http"
+$ export MINER_API_INFO="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBbGxvdyI6WyJyZWFkIiwid3JpdGUiLCJzaWduIiwiYWRtaW4iXX0.HEHN4W2NeNE4W1rDFGaOvvgnBoNDCuf3KkofpXWFWzs:/ip4/10.33.1.17/tcp/2345/http"
+```
+
+
+
+- 云浮 f03249
+
+```sh
+$ export FULLNODE_API_INFO="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBbGxvdyI6WyJyZWFkIiwid3JpdGUiLCJzaWduIiwiYWRtaW4iXX0.kkkHh7wiZZ9VRtFt0qoINZaQ9HtnXgrRmHmSNLxlNbo:/ip4/10.1.6.7/tcp/1234/http"
+
+$ export MINER_API_INFO="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBbGxvdyI6WyJyZWFkIiwid3JpdGUiLCJzaWduIiwiYWRtaW4iXX0.Euxo5f52j-2f5AcpT-NyfZl1fM89Zm8n48JD2RkuW6w:/ip4/10.1.6.7/tcp/2345/http"
+```
+
+
+
+
+
+# 9. 罚币检查工具
+
+
+
+## 9.1 导致罚币原因汇总
+
+- 掉盘
+- 文件数据不完整（unsealed、cache、sealed）
+- 磁盘IO错误（文件目录由读写变只读）
+- 文件意外丢失（导致时空证明出错/扇区终止）
+- Ticket超时[PC1+PC2时长超25小时] 导致程序状态紊乱
+- GET任务时间过长导致Fin失败
+- GPU掉了或报错
+- worker容器重启
+- 停机维护
+- Rust错误（C2出现rust: no unwind info panic错误）
+- 未知原因
+
+  1. C2计算证明失败（rust报错）：computing seal proof failed(2): storage call error 0: the element is not part of an r-order subgroup
+
+## 9.2 罚币命令行检查工具
+
+```sh
+# 命令行参数说明
+# --actor f07749 指定矿工号f07749(如果缺少--actor参数则取运行环境设定的矿工号)
+# --deadlines 指定搜索范围默认1deadline=60区块高度（一般情况下不用更改除非需要扩大搜索范围） 
+# --penalty参数指定罚款金额（仅PreCommit罚款结果匹配）
+# --warn 输出指定高度PreCommit超过20小时的扇区信息（指定此flag时无需输入高度值）
+# --no-faults 不查询错误扇区（节约搜索时间）
+# 384575 罚款区块高度（不输入则以最新高度取值)
+
+$ ./lotus-ctrl sectors check -actor f07749 384575
+
+SectorNumber  Method            Epoch   PreCommitDeposit          Penalty                   SectorState  State       
+25430         PreCommitSector   381478  0.084081911203059232 FIL  0.084081911203059232 FIL  N/A          Timeout     
+26151         PreCommitSector   381454  0.084081821599368638 FIL  0.084081821599368638 FIL  N/A          Timeout     
+26228         PreCommitSector   381519  0.084082966477558288 FIL  0.084082966477558288 FIL  N/A          Timeout     
+26231         PreCommitSector   381490  0.084082188995773388 FIL  0.084082188995773388 FIL  N/A          Timeout     
+26251         PreCommitSector   381542  0.084083565084969121 FIL  0.084083565084969121 FIL  N/A          Timeout     
+26265         PreCommitSector   381505  0.084082625159661686 FIL  0.084082625159661686 FIL  N/A          Timeout     
+26302         PreCommitSector   381515  0.084082897166343806 FIL  0.084082897166343806 FIL  N/A          Timeout     
+26333         PreCommitSector   381514  0.084082872802065609 FIL  0.084082872802065609 FIL  N/A          Timeout     
+26348         PreCommitSector   381436  0.084082075230362923 FIL  0.084082075230362923 FIL  N/A          Timeout     
+23948         TerminateSectors  384575  N/A                       0.088742412853201693 FIL  N/A          Terminated  
+24148         TerminateSectors  384575  N/A                       0.088739905996676899 FIL  N/A          Terminated  
+24178         TerminateSectors  384575  N/A                       0.088741269932496758 FIL  N/A          Terminated  
+24264         TerminateSectors  384575  N/A                       0.088745455109176315 FIL  N/A          Terminated 
+
+PreCommitSectors of sectors found 9, estimate precommit penalty [0.756742923719162691 FIL] 
+TerminateSectors of sectors found 4, estimate terminate penalty [0.354969043891551665 FIL] 
+
+# 以最新高度搜索PreCommit告警扇区信息
+$ ./lotus-ctrl sectors check -actor f07749 --warn
+```
+
+
+
+9.3 问题扇区相关信息检查脚本
+
+```sh
+if [ $# -eq 0 ];
+then  
+        echo "please input sector numer"
+else
+        clear 
+        echo "--------------------------------------SECTOR STATUS--------------------------------------------"
+        docker exec lotus-miner lotus-miner sectors status --log $1 2>&1 | grep -iE "SectorID|Status|Committed|Landed|Retry|Failed|error|expire"
+        echo "--------------------------------------SEALING JOB--------------------------------------------"
+        docker exec lotus-miner lotus-miner sealing jobs | grep $1
+        echo "--------------------------------------STORAGE FIND--------------------------------------------"
+        docker exec lotus-miner lotus-miner storage find $1
+fi
+```
+
+
+
+# 10. lotus-bench基准测试
+
+
+
+- **测试主机(worker)**
+
+  172.16.3.104 
+
+## 10.1 裸机测试
+
+
+
+```sh
+### 测试说明
+"仇柯人：
+lotus-bench，删除文件的逻辑在cmd/lotus-bench/qiniu.go，第88行和90行注释掉，89行保留
+
+
+命令是：
+
+RUST_BACKTRACE=full RUST_LOG=trace QINIU="/etc/cfg.toml" lotus-bench sealing --num-sectors 1 --sector-size 2KiB --storage-dir /tmp/stdir --skip-unseal true --parallel true
+------
+记得按照这个命令来
+```
+
+
+
+- **裸机测试脚本**
+
+ **~/libin/lotus/start-bench.sh**
+
+```sh
+#!/bin/bash
+### /fil-proofs目录要求空间足够大（可用空间最好512G以上）
+export FIL_PROOFS_PARAMETER_CACHE=/fil-proofs/filecoin-proof-parameters
+export FIL_PROOFS_PARENT_CACHE=/fil-proofs/filecoin-parents
+export RUST_LOG=info
+export TRUST_PARAMS=1
+export FIL_PROOFS_MAXIMIZE_CACHING=1
+export FIL_PROOFS_USE_GPU_COLUMN_BUILDER=1
+export FIL_PROOFS_USE_GPU_TREE_BUILDER=1
+export FIL_PROOFS_USE_MULTICORE_SDR=1
+
+# /data2/bench目录必须给当前用户0777访问权限（默认归属root账户）并且空间足够大（可用空间最好1T以上）
+# 如果有接七牛云SDK最好加上 --skip-unseal 跳过unseal操作避免出现crash问题
+./lotus-bench sealing --skip-unseal --storage-dir /data2/bench --sector-size 32GiB 
+```
+
+
+
+## 10.2 七牛云测试
+
+
+
+ **~/libin/lotus/start-qiniu.sh**
+
+- /etc/hosts文件增加节点和域名映射关系
+
+```sh
+ 172.16.2.102 node1 # 七牛云节点主机（node1）
+ 172.16.2.103 node2 # 七牛云节点主机（node2）
+ 172.16.2.110 node3 # 七牛云节点主机（node3）
+ 172.16.2.111 node4 # 七牛云节点主机（node4）
+ 172.16.3.104 node5 # 七牛云节点主机（node5）
+
+ 172.16.2.102 ecloud-qos.kodo.poc.cn
+ 172.16.2.102 uc-qos.kodo.poc.cn
+ 172.16.2.102 bucket-qos.kodo.poc.cn
+ 172.16.2.102 acc-qos.kodo.poc.cn
+ 172.16.2.102 up-qos.kodo.poc.cn
+ 172.16.2.102 rsf-qos.kodo.poc.cn
+ 172.16.2.102 rs-qos.kodo.poc.cn
+ 172.16.2.102 io-qos.kodo.poc.cn
+ 172.16.2.102 s3-qos.kodo.poc.cn
+ 172.16.2.102 api-qos.kodo.poc.cn
+ 172.16.2.102 one-qos.kodo.poc.cn
+ 172.16.2.102 kodobill.kodo.poc.cn
+ 172.16.2.102 consul-qos.kodo.poc.cn
+ 172.16.2.102 p-qos.kodo.poc.cn
+ 172.16.2.102 kmq-qos.kodo.poc.cn
+ 172.16.2.102 service-config.kodo.poc.cn service_config
+```
+
+
+
+- 七牛配置
+
+**cfg.toml**
+
+```sh
+up_hosts = ["http://172.16.2.102:5010", "http://172.16.2.103:5010", "http://172.16.2.110:5010", "http://172.16.2.111:5010"]
+io_hosts = ["http://172.16.2.102:5000", "http://172.16.2.103:5000", "http://172.16.2.110:5000", "http://172.16.2.111:5000"]
+rs_hosts = ["http://172.16.2.102:9433", "http://172.16.2.103:9433", "http://172.16.2.110:9433", "http://172.16.2.111:9433"]
+rsf_hosts = ["http://172.16.2.102:7913", "http://172.16.2.103:7913", "http://172.16.2.110:7913", "http://172.16.2.111:7913"]
+part = 64
+# 同时上传文件数控制
+up_concurrency = 8
+# 七牛控制台创建的用于基准测试的空间(跟具体用户绑定)
+bucket = "benchmark"
+# 以下信息见七牛控制台 "存储管理/存储用户/用户详情"
+uid = 7 # 用户libin148@qiniu.com账户对应UID
+ak = "Wp2uU6in4AJ7LwsDVLucWMDaYV7aOLWHru8A3nue" # 用户libin148@qiniu.com ACCESS KEY
+sk = "eIx0-V5H36kO6UvkVAS-VhoICDulcg9OelTRWCY4" # 用户libin148@qiniu.com SECRET KEY
+sim=false
+```
+
+
+
+- 测试脚本+七牛环境变量
+
+```sh
+#!/bin/bash
+### /fil-proofs目录要求空间足够大（可用空间最好512G以上）
+export FIL_PROOFS_PARAMETER_CACHE=/fil-proofs/filecoin-proof-parameters
+export FIL_PROOFS_PARENT_CACHE=/fil-proofs/filecoin-parents
+export RUST_LOG=info
+export TRUST_PARAMS=1
+export FIL_PROOFS_MAXIMIZE_CACHING=1
+export FIL_PROOFS_USE_GPU_COLUMN_BUILDER=1
+export FIL_PROOFS_USE_GPU_TREE_BUILDER=1
+export FIL_PROOFS_USE_MULTICORE_SDR=1
+export QINIU="cfg.toml" # 指定七牛云cfg.toml配置（默认跟lotus-bench在一个目录）
+
+# /data2/bench目录必须给当前用户0777访问权限（默认归属root账户）并且空间足够大（可用空间最好1T以上）
+# 如果有接七牛云SDK最好加上 --skip-unseal 跳过unseal操作避免出现crash问题
+./lotus-bench sealing --skip-unseal --storage-dir /data2/bench --sector-size 32GiB 
+```
+
+
+
+# 11. 正式网创建矿工号
+
+## 11.1 主机环境信息
+
+**中山节点:**  **10.20.2.107** (注意：必须确保节点是全量同步的节点)
+
+**API token:**  
+
+```sh
+# 全节点API环境变量
+FULLNODE_API_INFO="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBbGxvdyI6WyJyZWFkIiwid3JpdGUiLCJzaWduIiwiYWRtaW4iXX0.TT_4RohGN8SZXYElRGEptl3zl8V6ny2yR-i42mRbVxU:/ip4/10.20.2.107/tcp/1234/http"
+```
+
+**创建矿工号**
+
+```sh
+# 裸机命令行 --owner输入节点的唯一哈希（可从飞狐网filfox.io查到）
+$ export FULLNODE_API_INFO="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBbGxvdyI6WyJyZWFkIiwid3JpdGUiLCJzaWduIiwiYWRtaW4iXX0.TT_4RohGN8SZXYElRGEptl3zl8V6ny2yR-i42mRbVxU:/ip4/10.20.2.107/tcp/1234/http"
+$ export FIL_PROOFS_PARAMETER_CACHE=/fil-proofs/filecoin-proof-parameters
+$ export FIL_PROOFS_PARENT_CACHE=/fil-proofs/filecoin-parents
+$ lotus-miner init --owner f3upuh6u5tukt57szsnumwhludnldz5c4rcsgllbd4csdbnqfvdlta7clpr3svkof4o7j73iy7z6ju3kslq7fq --sector-size 32GiB
+```
+
+**登录节点服务器手工提交消息**
+
+```sh
+# 查看本地阻塞的消息
+$ lotus mpool pending --local
+
+{
+  "Message": {
+    "Version": 0,
+    "To": "f04",
+    "From": "f3upuh6u5tukt57szsnumwhludnldz5c4rcsgllbd4csdbnqfvdlta7clpr3svkof4o7j73iy7z6ju3kslq7fq", # 节点身份信息
+    "Nonce": 6209, # 消息ID(后面会用到)
+    "Value": "0",
+    "GasLimit": 35080321,
+    "GasFeeCap": "199542073",
+    "GasPremium": "738920",
+    "Method": 2,
+    "Params": "hVgxA6Pof1OzoqffyzJtGWOug2rHnouRFIy1hHwUhhbAtRrmD4lvjuVVOLx30/2jH8+TTVgxA6Pof1OzoqffyzJtGWOug2rHnouRFIy1hHwUhhbAtRrmD4lvjuVVOLx30/2jH8+TTQhYJgAkCAESIICFPMiMt+ejq6PFmvwIufX2a1Q7O7mArrGKBDGyrripgA==",
+    "CID": {
+      "/": "bafy2bzacea4k76z4oi3eixd7lojujh7lqfgsvhjsc472fp6rqt6dsjqogcdas" # 创建矿工需要上链的消息
+    }
+  },
+  "Signature": {
+    "Type": 2,
+    "Data": "jqN1+HJFf2a4dYcHUsKccXvvHs2EZ9QFlRFLZKbk4pjMbqmZ4o+0Y8Ru2DurhrnpD0qeBcr9V1yq7bMiRyTvOykOBlNKoFykP9/Lf1Tbaz1Mp1opV75qv+XgGItKUGfv"
+  },
+  "CID": {
+    "/": "bafy2bzacea4k76z4oi3eixd7lojujh7lqfgsvhjsc472fp6rqt6dsjqogcdas"
+  }
+}
+
+# 手动修改参数后替换原有消息 gas-feecap从飞狐看 gas-premium 提交失败会输出最低的gas小费(本次操作输出是923651)
+$ lotus mpool replace --gas-feecap 3500000000 --gas-premium 200000 --gas-limit 68929696 t3upuh6u5tukt57szsnumwhludnldz5c4rcsgllbd4csdbnqfvdlta7clpr3svkof4o7j73iy7z6ju3kslq7fq 6209
+ERROR: failed to push new message to mempool: message from f3upuh6u5tukt57szsnumwhludnldz5c4rcsgllbd4csdbnqfvdlta7clpr3svkof4o7j73iy7z6ju3kslq7fq with nonce 6209 already in mpool, increase GasPremium to 923651 from 200000 to trigger replace by fee: replace by fee has too low GasPremium
+
+# 将gas-premium改为923651即可提交成功（提交成功返回新的消息ID，可通过该ID到飞狐查详情 ）
+$ lotus mpool replace --gas-feecap 3500000000 --gas-premium 923651 --gas-limit 68929696 t3upuh6u5tukt57szsnumwhludnldz5c4rcsgllbd4csdbnqfvdlta7clpr3svkof4o7j73iy7z6ju3kslq7fq 6209
+new message cid:  bafy2bzacedgk2rytprdo6nkx2vrgqgejmew5y3lepo7cbwnwgsp637ussc6hw
+
+
+```
+
+**飞狐查看**
+
+https://filfox.info/zh/message/bafy2bzacedgk2rytprdo6nkx2vrgqgejmew5y3lepo7cbwnwgsp637ussc6hw
+
+```sh
+
+消息ID bafy2bzacedgk2rytprdo6nkx2vrgqgejmew5y3lepo7cbwnwgsp637ussc6hw
+高度 442345
+时间 2021-01-25 20:12:30
+所属区块
+bafy2bzaceajc275ejn2aczhcmf6qegisidaumiwuohuo35ec4czkaedccybyu
+bafy2bzaceal6r4yz5qqtu2c2kgd6e2spx7me3h7wlaiymsz62oelddgxmupl2
+bafy2bzacec6kjea2oxiqyirdzoedviho4xi2ytc27k3np7ipylhkwtto2ukai
+bafy2bzacecnabaijfxoclz5oe3oqvx7v5d2stv774zb5kn57xv5wtt64uwlso
+bafy2bzacedhey55bltwkznw6i5e2d72nl4vzumpfrgae4gk4w6gaqsq2p56qu
+bafy2bzaceb52ycrval6zkerod6tphu6f5vllassc6xqkilsldgmtpyi3dreu2
+
+发送方 f3upuh6u5tukt57szsnumwhludnldz5c4rcsgllbd4csdbnqfvdlta7clpr3svkof4o7j73iy7z6ju3kslq7fq (ViIn)
+接收方 f04(官方)
+方法 CreateMiner
+金额 0 FIL
+状态 OK
+{
+  "Owner": "f3upuh6u5tukt57szsnumwhludnldz5c4rcsgllbd4csdbnqfvdlta7clpr3svkof4o7j73iy7z6ju3kslq7fq",
+  "Worker": "f3upuh6u5tukt57szsnumwhludnldz5c4rcsgllbd4csdbnqfvdlta7clpr3svkof4o7j73iy7z6ju3kslq7fq",
+  "SealProofType": 8,
+  "PeerId": "ACQIARIggIU8yIy356Oro8Wa/Ai59fZrVDs7uYCusYoEMbKuuKk=",
+  "MultiAddresses": []
+}
+返回值
+{
+  "IdAddress": "f0144615",
+  "RobustAddress": "f2p3guixpuvmfgc2vqktsrfz5qd6jqtuj5rdk5u7i"
+}
+```
+
+查看miner API信息
+
+```sh
+# 设置环境变量
+$ export FULLNODE_API_INFO="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBbGxvdyI6WyJyZWFkIiwid3JpdGUiLCJzaWduIiwiYWRtaW4iXX0.TT_4RohGN8SZXYElRGEptl3zl8V6ny2yR-i42mRbVxU:/ip4/10.20.2.107/tcp/1234/http"
+$ export FIL_PROOFS_PARAMETER_CACHE=/fil-proofs/filecoin-proof-parameters
+$ export FIL_PROOFS_PARENT_CACHE=/fil-proofs/filecoin-parents
+
+# 启动lotus-miner
+$ lotus-miner run 
+2021-01-26T02:43:19.858Z        INFO    build   go-paramfetch@v0.0.2-0.20200701152213-3e0f0afdc261/paramfetch.go:162    parameter and key-fetching complete
+2021-01-26T02:43:19.861Z        WARN    modules modules/core.go:121     Generating new API secret
+2021-01-26T02:43:19.861Z        INFO    stores  stores/index.go:138     New sector storage: 0b9bf32a-d9d3-450a-bba7-09642046acad
+2021-01-26T02:43:19.869Z        WARN    storedask       storedask/storedask.go:172      no previous ask found, miner will not accept deals until a price is set
+2021-01-26T02:43:19.899Z        INFO    storageminer    storage/miner.go:205    starting up miner f0144615, worker addr f3upuh6u5tukt57szsnumwhludnldz5c4rcsgllbd4csdbnqfvdlta7clpr3svkof4o7j73iy7z6ju3kslq7fq
+2021-01-26T02:43:19.909Z        INFO    main    lotus-storage-miner/run.go:151  Remote version 1.4.0+git.c0e4ace5+api1.0.0
+2021-01-26T02:43:19.911Z        INFO    markets loggers/loggers.go:56   module ready    {"module": "retrieval provider"}
+2021-01-26T02:43:19.911Z        INFO    markets loggers/loggers.go:56   module ready    {"module": "provider data transfer"}
+2021-01-26T02:43:19.911Z        INFO    markets loggers/loggers.go:56   module ready    {"module": "storage provider"}
+2021-01-26T02:43:19.919Z        INFO    markets loggers/loggers.go:56   module ready    {"module": "piecestore"}
+2021-01-26T02:43:19.932Z        INFO    miner   miner/warmup.go:49      skipping winning PoSt warmup, no sectors
+2021-01-26T02:43:22.862Z        DEBUG   advmgr  sector-storage/sched.go:267     SCHED 0 queued; 0 workers; 0 stores
+
+# 等miner输出完毕后打开一个新终端
+$ cd ~/.lotusminer && ls -a
+.  ..  api  cache  config.toml  datastore  data-transfer  journal  keystore  repo.lock  sealed  sectorstore.json  storage.json  token  unsealed
+
+# api 文件保存的是接口路径和类型
+$ cat api
+/ip4/127.0.0.1/tcp/2345/http
+
+# token 文件中保存的是API令牌
+$ cat token
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBbGxvdyI6WyJyZWFkIiwid3JpdGUiLCJzaWduIiwiYWRtaW4iXX0.NASOK2kY2Oofa1B2-1FIq8P4y6EBzV1Pvlqj0kOzovE
+
+# 扇区存储ID
+$ cat sectorstore.json 
+{
+  "ID": "0b9bf32a-d9d3-450a-bba7-09642046acad",
+  "Weight": 10,
+  "CanSeal": true,
+  "CanStore": true
+}
+
+# 存储路径
+$ cat storage.json 
+{
+  "StoragePaths": [
+    {
+      "Path": "/data/lotusminer"
+    }
+  ]
+}
+impool@impool:/data/lotusminer$ 
+```
+
+# 12. 测试网环境搭建
+
+
+
+## 12.1 slack账号(gmail)
+
+filestorer.lee@gmail.com
+
+
+
+# 13. 编译打包docker容器
+
+
+
+## 13.1 克隆代码
+
+```sh
+$ git clone http://git.impool.com:30000/storeros/lotus.git lotus-qiniu
+$ cd lotus-qiniu/extern && git checkout qiniu-oss
+$ rm -rf filecoin-ffi  merkletree  rust-filecoin-proofs-api  rust-fil-proofs 
+$ git clone http://git.impool.com:30000/storeros/filecoin-ffi.git
+$ git clone http://git.impool.com:30000/storeros/merkletree.git
+$ git clone http://git.impool.com:30000/storeros/rust-filecoin-proofs-api.git
+$ git clone http://git.impool.com:30000/storeros/rust-fil-proofs.git
+```
+
+## 13.2 构建容器
+
+```sh
+# 进入到lotus代码目录下的dockers目录中
+$ cd dockers
+# 执行make编译打包容器
+$ make
+.
+.
+.
+Successfully built b44a22dead0d
+Successfully tagged filestorer/lotus:latest
+
+$ docker images
+REPOSITORY         TAG                   IMAGE ID       CREATED         SIZE
+filestorer/lotus   latest                b44a22dead0d   4 minutes ago   852MB
+golang             1.15.5-buster         6d8772fbd285   2 months ago    839MB
+nvidia/dcgm        latest                29eefa224776   6 months ago    320MB
+google/cadvisor    latest                eb1210707573   2 years ago     69.6MB
+nvidia/opencl      runtime-ubuntu18.04   69e5134dc483   2 years ago     85.1MB
+```
+
+
+
+## 13.3 导出/导入镜像
+
+```sh
+# 导出镜像
+$ docker save -o filestorer-lotus.tar b44a22dead0d
+# 导入镜像
+$ docker load -i filestorer-lotus.tar
+```
+
+
+
+## 14 出块率
+
+通过lotus-miner info查看矿工赢块率，跟WinningPoSt逻辑有关（30s一个高度，一个高度出5个块）
+
+- 计算公式
+
+$$
+(矿工算力/全网算力)x 5 x (24x60x60/30s)
+$$
+
+
+
+# 15 强制升级lotus v1.5.0
+
+
+
+## 15.1 git创建patch
+
+- **某次提交（含）之前的几次提交**
+
+```sh
+$ git format-patch 【commit sha1 id】-n -o [patch dir]
+```
+
+n指从sha1 id对应的commit开始算起n个提交。
+
+```css
+git format-patch  2a2fb4539925bfa4a141fe492d9828d030f7c8a8 -2 -o /path/to/xxx-patches
+```
+
+- **某个提交的patch**
+
+```sh
+$ git format-patch [commit sha1 id] -1 -o [patch dir]
+```
+
+案例
+
+```css
+git format-patch  2a2fb4539925bfa4a141fe492d9828d030f7c8a8 -1 -o /path/to/xxx-patches
+```
+
+- **某两次提交之间的所有patch**
+
+```sh
+$ git format-patch [commit sha1 id]..[commit sha1 id] -o [patch dir]
+```
+
+案例
+
+```css
+git format-patch  2a2fb4539925bfa4a141fe492d9828d030f7c8a8..89aebfcc73bdac8054be1a2425986105bfa32 -o /path/to/xxx-patches
+```
+
+
+
+## 15.2 git打补丁
+
+```sh
+# 检查补丁是否能正常打入
+$ git apply --check path/to/xxx.patch
+# 打入补丁(子命令 am -3 可以智能合并)
+$ git am -3 path/to/xxx.patch
+```
+
+```sh
+# 跳过冲突
+$ git am --skip
+# 回退冲突
+$ git am --abort
+```
+
+
+
+## 15.3 lotus官方v1.5.0合并到qiniu-oss分支
+
+官方v1.4.0 commit e9989d0e4651b278ea7ec9d247c65e111aca2a9f
+
+官方v1.5.0 commit d8bb112bcd9ad25c35748e93e23b8024d05f093c
+
+```sh
+# 补丁制作方式一(format-patch方式会在当前目录生成多个.patch文件[-o参数可以指定输出目录],补丁保留提交信息 [适合小批量补丁])
+$ git format-patch  e9989d0e4651b278ea7ec9d247c65e111aca2a9f -2
+```
+
+```sh
+# 补丁制作方式二（diff方式会将两次提交之间的差异合并到一个文件中方便一次性打补丁）
+$ git diff e9989d0e4651b278ea7ec9d247c65e111aca2a9f d8bb112bcd9ad25c35748e93e23b8024d05f093c --binary -- . > /tmp/lotus-v1.5.0-patches.diff
+
+# 进入lotus v1.4.0代码目录
+$ cd $GOPATH/src/storeros/lotus
+# 检查是否打补丁是否能够成功
+$ git apply --check /tmp/lotus-v1.5.0-patches.diff
+# 开始打补丁
+$ git apply /tmp/lotus-v1.5.0-patches.diff
+```
+
+
+
+## 15.4 七牛云存储升级v1.5.0
+
+```css
+2021年3月3号晚上7点左右，Filecoin将强制更新 v1.5.0
+https://github.com/filecoin-project/lotus/discussions/5617#discussioncomment-399327
+
+七牛代码已合并完成且测试通过，代码及更新指南如下，有疑问随时联系我们，谢谢！
+lotus150-rust540：https://drive.weixin.qq.com/s?k=AJwASQdIAAwV4csJyCACgAzAZuAH0
+lotus150更新指南：https://doc.weixin.qq.com/txdoc/word?scode=AJwASQdIAAwEG210gKACgAzAZuAH0&docid=w2_AMEA7gYFAHck047GQY3SK2hEb7BYg&type=0
+
+七牛SDK有更新，请务必按照《lotus150更新指南》来进行go和rust的sdk更新。
+```
+
+
+
+## 15.5 Sub modules 更新
+
+
+
+```sh
+# 查看sub modules状态
+$ git submodule status                                                                                                                                                                                             
+ 1cbb16ed9580dcd3e9593b71221fcf2a048faaef extern/blst (v0.1.1-127-g1cbb16e)
+ 1d9cb3e8ff53f51f9318fc57e5d00bc79bdc0128 extern/filecoin-ffi (0.7.3-304-g1d9cb3e)
+ cf3a0658cec396cd33fc46c5d18930a393f4124f extern/merkletree (heads/master)
+ 81683a9917e2bb7e1a506b55db4dd781e2ce9c7e extern/rust-fil-proofs (heads/master)
+ 74a52c99aa7fd73087ec5b987de94b8cd66653ec extern/rust-filecoin-proofs-api (v5.4.1-1-g74a52c9)
+ 5bfb928910b01ac8b940a693af2884f7f8276211 extern/serialization-vectors (heads/master)
+ d9a75a7873aee0db28b87e3970d2ea16a2f37c6a extern/test-vectors (schema/v0.0.5)
+ 
+# 远程仓库升级后，在项目中升级sub modules
+$ git submodule update --init --remote 
+
+Submodule path 'extern/blst': checked out '5435c307e5b3540a6600b816a6d01bdb13a81869'
+Submodule path 'extern/filecoin-ffi': checked out '93a98279316e979068a82160ae2d18030bce3768'
+Submodule path 'extern/merkletree': checked out '05ee863c8950e4ce18717d21d872dbdba3dc1b8d'
+Submodule path 'extern/rust-fil-proofs': checked out '61b3c63e0568b449af28aedf57ca36c4799feaa7'
+Submodule path 'extern/rust-filecoin-proofs-api': checked out '6a35af6c7e580350202679f128695c30370f8bd1'
+Submodule path 'extern/test-vectors': checked out 'f979a0ff5f2c4495476bd37e0e1ada789289a6e1'
+
+# 升级submodule后必须先commit一次否则使用Makefile这种编译方式会内部执行 git submodule update --init 时会通过cache覆盖升级的sub module版本
+$ git add -A && git commit -a -m "upgrade qi niu v1.5.0"
+
+# 进入代码目录
+$ cd $GOPATH/src/storeros/lotus-qiniu
+
+# merkletree子模块更名
+$ cat .git/config | grep -C 3 "extern/merkletree" 
+
+[submodule "extern/merkletree"]
+        active = true
+        url = http://git.impool.com:30000/storeros/merkletree.git
+        
+$ git submodule deinit -f extern/merkletree 
+
+# vi编辑.gitmodules将exter/merkletree更名为exern/merkle_light(编辑后查看.gitmodules内容如下)
+$ cat .gitmodules
+
+[submodule "extern/merkle_light"]
+	path = extern/merkle_light
+	url = http://git.impool.com:30000/storeros/merkletree.git
+	
+# 移除merkletree缓存文件	
+$ rm -rf .git/modules/extern/merkletree	
+$ git rm --cached extern/merkletree
+
+$ git add -A && git commit -a -m "merkletree子模块更名为merkle_light"
+
+# 编译新版lotus
+$ make all
+```
 
