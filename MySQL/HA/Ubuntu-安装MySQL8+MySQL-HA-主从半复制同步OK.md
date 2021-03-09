@@ -65,8 +65,8 @@ mysql> select host,user,plugin from mysql.user; # 如果root用户对应的host�
 4 rows in set (0.00 sec)
 
 mysql> update mysql.user set plugin='mysql_native_password', host='%' where user='root'; #修改root密码加密方式和允许访问主机IP
-mysql> update mysql.user set authentication_string=PASSWORD('123456') where user='root'; #适用于5.x版本修改密码
-mysql> alter mysql.user 'root'@'%' IDENTIFIED BY '123456';  #适用于8.x版本修改密码(设置不成功可能是需要复杂密码)
+mysql> update mysql.user set authentication_string=PASSWORD('123456') where user='root'; #适用于5.7之前版本修改密码
+mysql> alter user 'root'@'%' IDENTIFIED WITH mysql_native_password BY '123456';  #适用于8.x版本修改密码(修改失败请将authentication_string字段的内容置空)
 mysql> flush privileges;
 mysql> quit;
 ```
@@ -379,7 +379,7 @@ masterha_check_repl --conf=/etc/masterha/app1.cnf
 # 3. 常见问题(FAQ)
 
 ## 3.1 MySQL主从复制，启动slave时，出现下面报错
-   
+
 ```sql
 mysql> start slave;
 ERROR 1872 (HY000): Slave failed to initialize relay log info structure from the repository1
@@ -467,4 +467,4 @@ Thu Nov 28 19:54:05 2019 - [info] MHA::MasterMonitor version 0.55.
 Thu Nov 28 19:54:06 2019 - [error][/usr/share/perl5/MHA/MasterMonitor.pm, ln386] Error happend on checking configurations. Redundant argument in sprintf at /usr/share/perl5/MHA/NodeUtil.pm line 190.
 Thu Nov 28 19:54:06 2019 - [error][/usr/share/perl5/MHA/MasterMonitor.pm, ln482] Error happened on monitoring servers.
 Thu Nov 28 19:54:06 2019 - [info] Got exit code 1 (Not master dead).
-``` 
+```
