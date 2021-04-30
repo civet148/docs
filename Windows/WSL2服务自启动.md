@@ -28,13 +28,17 @@ ws.run "wsl -d Ubuntu-20.04 -u root /etc/init.wsl start"
 ## 3. 在Ubuntu分发版本中添加启动脚本
 
 打开WSL终端（ubuntu终端）, 在/etc/目录下创建 init.wsl 的文件（赋予执行权限)
+```sh
+$ sudo vi /etc/init.wsl
+```
+
 
 文件内容:
 
-```text
-#!/bin/sh
-service ssh $1
-service docker $1
+```sh
+#! /bin/sh
+/etc/init.d/ssh $1
+/etc/init.d/docker $1
 ```
 
 保存脚本内容后赋予执行权限
