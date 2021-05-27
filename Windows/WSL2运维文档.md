@@ -1,6 +1,44 @@
-# 1. WSL2服务自启动配置
 
-## 1.1 查看WSL分发版本
+
+
+
+# 1. 安装WSL2
+
+点击Windows菜单，找到Microsoft store（微软商店）打开后搜索WSL安装Ubuntu-20.04
+
+## 1.1 升级WSL升级内核
+
+[点击此处Windows 10 上安装 WSL2](https://docs.microsoft.com/zh-cn/windows/wsl/install-win10#step-4---download-the-linux-kernel-update-package)
+
+## 1.2 检查Ubuntu版本
+
+打开cmd或powershell执行下面的命令行查看版本(VERSION是1则继续往下操作，是2就忽略)
+
+```sh
+CMD> wsl -l -v
+  NAME              STATE           VERSION
+* Ubuntu-20.04    Running             1
+```
+
+转换为WSL2版本(等待几分钟)
+
+```sh
+CMD> wsl --set-version Ubuntu 2
+正在进行转换，这可能需要几分钟时间...
+有关与 WSL 2 的主要区别的信息，请访问 https://aka.ms/wsl2
+转换完成。
+```
+
+设置默认版本为2
+
+```sh
+CMD> wsl --set-default-version 2
+有关与 WSL 2 的主要区别的信息，请访问 https://aka.ms/wsl2
+```
+
+# 2. WSL2服务自启动配置
+
+## 2.1 查看WSL分发版本
 
 - 分发版本的名称需要在后面的自启动脚本中对应
 
@@ -14,7 +52,7 @@ CMD> wsl -l -v
 
 
 
-## 1.2 添加自启动脚本(Windows)
+## 2.2 添加自启动脚本(Windows)
 
 Win键+R打开启动窗口，输入 shell:startup
 
@@ -27,7 +65,7 @@ Set ws = WScript.CreateObject("WScript.Shell")
 ws.run "wsl -d Ubuntu-20.04 -u root /etc/init.wsl start"
 ```
 
-## 1.3 在Ubuntu分发版本中添加启动脚本
+## 2.3 WSL2添加服务自启动脚本
 
 打开WSL终端（ubuntu终端）, 在/etc/目录下创建 init.wsl 的文件（赋予执行权限)
 ```sh
@@ -73,13 +111,17 @@ $ sudo chmod +x /etc/init.wsl
 
 
 
-## 1.4 重启windows
+## 2.4 重启windows
+
+# 3. WSL端口映射到Win10主机
 
 
 
-# 2. WSL端口映射到Win10主机
+**有需要则执行，无映射需要就忽略**
 
-## 2.1 查看WSL主机IP地址
+
+
+## 3.1 查看WSL主机IP地址
 
 打开CMD窗口执行命令行
 
